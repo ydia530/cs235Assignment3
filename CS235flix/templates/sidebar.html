@@ -1,0 +1,21 @@
+<aside id="sidebar">
+
+    <header>
+        <h1>Recommend movies</h1>
+    </header>
+
+    {% for movie in selected_movies %}
+        <div id="movie-container">
+            <a href="" >
+                {% if movie.poster is not none %}
+                <img src={{ movie.poster }} class="img-small">
+                {% else %}
+                <img src=https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png alt="Poster not found!"class="img-small">
+                {% endif %}
+            </a>
+            <div id="movie-description">
+                <p>{{ movie.title }}（{{ movie.year }})</p>
+            </div>
+        </div>
+    {% endfor %}
+</aside>
