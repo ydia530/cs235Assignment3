@@ -110,6 +110,7 @@ class AbstractRepository(abc.ABC):
         """
 
         raise NotImplementedError
+    '''
 
     @abc.abstractmethod
     def get_movies_by_actor(self, actor_name: str):
@@ -139,3 +140,4 @@ class AbstractRepository(abc.ABC):
 
         """
         raise NotImplementedError
+'''

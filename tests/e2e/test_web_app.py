@@ -135,12 +135,12 @@ def test_movies_with_review(client):
     assert b'I am so enjoy watching this movie!' in response.data
 
 
-def test_movies_with_tag(client):
+def test_movies_with_genre(client):
     # Check that we can retrieve the movies page.
     response = client.get('/movies_by_genre?genre=Action')
     assert response.status_code == 200
 
-    # Check that all movies tagged with 'Health' are included on the page.
+    # Check that all movies genreged with 'Health' are included on the page.
     assert b'Action Movies' in response.data
     assert b'Guardians of the Galaxy' in response.data
     assert b'The Great Wall' in response.data

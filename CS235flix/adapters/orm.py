@@ -4,7 +4,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import mapper, relationship
 
-from CS235flix.domain import model
+from CS235flix.domain.model import User, Movie, Review, Genre, Actor, Director
 
 metadata = MetaData()
 
@@ -24,13 +24,13 @@ reviews = Table(
     Column('timestamp', DateTime, nullable=False)
 )
 
-articles = Table(
+movies = Table(
     'movies', metadata,
     Column('rank', Integer, primary_key=True),
     Column('year', Integer, nullable=False),
     Column('title', String(255), nullable=False),
     Column('description', String(1024), nullable=False),
-    Column('poster', String(255), nullable=False)
+    Column('poster', String(255), nullable=True)
 )
 
 genres = Table(
@@ -40,37 +40,58 @@ genres = Table(
 )
 
 movie_genres = Table(
-    'movie_gneres', metadata,
+    'movie_genres', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('movie_rank', ForeignKey('movies.rank')),
-    Column('genre_id', ForeignKey('gneres.id'))
+    Column('genre_id', ForeignKey('genres.id'))
+)
+
+actors = Table(
+    "actors", metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', String(64), nullable=False)
+)
+
+directors = Table(
+    "director", metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', String(64), nullable=False)
 )
 
 
+
+
 def map_model_to_tables():
-    mapper(model.User, users, properties={
-        '_username': users.c.username,
-        '_password': users.c.password,
-        '_comments': relationship(model.Comment, backref='_user')
+    mapper(User, users, properties={
+        '_User__username': users.c.username,
+        '_User__password': users.c.password,
+        '_User__reviews': relationship(Review, backref='_user')
     })
-    mapper(model.Comment, comments, properties={
-        '_comment': comments.c.comment,
-        '_timestamp': comments.c.timestamp
+    mapper(Review, reviews, properties={
+        '_Review__review': reviews.c.review_text,
+        '_Review__timestamp': reviews.c.timestamp
     })
-    articles_mapper = mapper(model.Article, articles, properties={
-        '_id': articles.c.id,
-        '_date': articles.c.date,
-        '_title': articles.c.title,
-        '_first_para': articles.c.first_para,
-        '_hyperlink': articles.c.hyperlink,
-        '_image_hyperlink': articles.c.image_hyperlink,
-        '_comments': relationship(model.Comment, backref='_article')
+
+    movies_mapper = mapper(Movie, movies, properties={
+        '_Movie__rank': movies.c.rank,
+        '_Movie__release_year': movies.c.year,
+        '_Movie__title': movies.c.title,
+        '_Movie__poster': movies.c.poster,
+        '_Movie__description': movies.c.description,
+        '_Movie__reviews': relationship(Review, backref='_movie')
     })
-    mapper(model.Tag, tags, properties={
-        '_tag_name': tags.c.name,
-        '_tagged_articles': relationship(
-            articles_mapper,
-            secondary=article_tags,
+
+    mapper(Genre, genres, properties={
+        '_Genre__genre_name': genres.c.name,
+        '_Genre__movies': relationship(
+            movies_mapper,
+            secondary=movie_genres,
             backref="_tags"
         )
+    })
+    mapper(Actor, actors, properties={
+        '_Actor__actor_full_name': actors.c.name,
+    })
+    mapper(Director, directors, properties={
+        '_Director__director_full_name': directors.c.name,
     })
